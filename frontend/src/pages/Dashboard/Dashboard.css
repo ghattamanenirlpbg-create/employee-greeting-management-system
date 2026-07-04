@@ -1,0 +1,35 @@
+.dashboard-container {
+    min-height: 100vh;
+    background: #f4f6f9;
+    padding: 40px;
+}
+
+.dashboard-heading {
+    text-align: center;
+    color: #1976d2;
+    font-size: 32px;
+    font-weight: bold;
+
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.dashboard-welcome {
+    text-align: center;
+    color: #666666;
+    font-size: 18px;
+
+    margin-bottom: 40px;
+}
+
+.dashboard-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+
+    max-width: 1100px;
+
+    margin: auto;
+}
