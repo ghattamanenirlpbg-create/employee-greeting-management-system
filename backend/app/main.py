@@ -11,6 +11,8 @@ from .routers import uploads
 from .routers import greeting_links
 from .routers import auth
 from fastapi.staticfiles import StaticFiles
+from .database import SessionLocal
+from . import models
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -44,3 +46,31 @@ app.include_router(auth.router)
 @app.get("/")
 def root():
     return {"message": "Employee Greeting Management System API is running"}
+
+@app.get("/create-admin")
+def create_admin():
+
+    db = SessionLocal()
+
+    existing = (
+        db.query(models.User)
+        .filter(models.User.username == "admin")
+        .first()
+    )
+
+    if existing:
+        db.close()
+        return {"message": "Admin already exists"}
+
+    admin = models.User(
+        username="admin",
+        password="admin@123",
+        role="Admin",
+        status="Active"
+    )
+
+    db.add(admin)
+    db.commit()
+    db.close()
+
+    return {"message": "Admin user created successfully"}
