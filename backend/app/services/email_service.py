@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-FROM_EMAIL = os.getenv("EMAIL")
+FROM_EMAIL = os.getenv("EMAIL_ADDRESS")
 
 
 def send_greeting_email(
