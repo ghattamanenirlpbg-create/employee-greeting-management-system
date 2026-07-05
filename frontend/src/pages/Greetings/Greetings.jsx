@@ -69,6 +69,78 @@ const Greetings = () => {
 
     };
 
+    const generateGreeting = async () => {
+
+    if (!employee) {
+
+        alert("Fetch Employee First");
+
+        return;
+
+    }
+
+    if (!file) {
+
+        alert("Please select employee photograph");
+
+        return;
+
+    }
+
+    const formData = new FormData();
+
+    formData.append("emp_id", employee.emp_id);
+
+    formData.append("file", file);
+
+    try {
+
+        const response = await api.post(
+
+            "/greetings/generate",
+
+            formData,
+
+            {
+
+                headers: {
+
+                    "Content-Type": "multipart/form-data"
+
+                }
+
+            }
+
+        );
+
+        navigate(
+
+            "/greeting-preview",
+
+            {
+
+                state: {
+
+                    image: response.data.image
+
+                }
+
+            }
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("Greeting Generation Failed");
+
+    }
+
+};
+
     // ==========================
     // Generate Greeting
     // ==========================
