@@ -7,6 +7,7 @@ import {
     Typography
 } from "@mui/material";
 
+const API = import.meta.env.VITE_API_URL;
 
 function GreetingPreview() {
 
@@ -18,7 +19,7 @@ function GreetingPreview() {
 
         const link = document.createElement("a");
 
-        link.href = `http://127.0.0.1:8000/${image}`;
+        link.href = `${API}/${image}`;
 
         link.download = "Appreciation_Card.png";
 
@@ -52,39 +53,27 @@ function GreetingPreview() {
                     variant="h4"
                     mb={3}
                 >
-
                     Appreciation Card
-
                 </Typography>
 
                 <img
-
-                    src={`http://127.0.0.1:8000/${image}`}
-
+                    src={`${API}/${image}`}
                     alt="Greeting"
-
                     style={{
                         width: "100%",
                         borderRadius: 12,
                         border: "1px solid #ddd"
                     }}
-
                 />
 
                 <br /><br />
 
                 <Button
-
                     variant="contained"
-
                     size="large"
-
                     onClick={downloadCard}
-
                 >
-
                     Download Appreciation Card
-
                 </Button>
 
             </Paper>
