@@ -21,7 +21,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        https://employee-greeting-management-system.vercel.app/
+        "https://employee-greeting-management-system.vercel.app",
         "https://employee-greeting-management-system-hg9fl2yv8-rlprasad.vercel.app",
         
     ],
