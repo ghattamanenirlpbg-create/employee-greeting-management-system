@@ -16,11 +16,22 @@ def get_all_employees(db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=schemas.Employee)
+@router.post("/", response_model=schemas.Employee)
 def create_employee(
     employee: schemas.EmployeeCreate,
     db: Session = Depends(get_db)
 ):
-    return crud.create_employee(db, employee)
+
+    try:
+
+        return crud.create_employee(db, employee)
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 @router.put("/{employee_id}", response_model=schemas.Employee)
@@ -29,12 +40,30 @@ def update_employee(
     employee: schemas.EmployeeUpdate,
     db: Session = Depends(get_db)
 ):
-    updated = crud.update_employee(db, employee_id, employee)
 
-    if not updated:
-        raise HTTPException(status_code=404, detail="Employee not found")
+    try:
 
-    return updated
+        updated = crud.update_employee(
+            db,
+            employee_id,
+            employee
+        )
+
+        if updated is None:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Employee not found"
+            )
+
+        return updated
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 
 @router.delete("/{employee_id}")

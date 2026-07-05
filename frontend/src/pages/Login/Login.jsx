@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import api from "../../services/api";
 
 import "../../styles/Login.css";
 
@@ -10,32 +13,118 @@ function Login() {
 
     const navigate = useNavigate();
 
-    function handleLogin() {
-        // Temporary navigation
-        // Backend authentication will be added later
-        navigate("/dashboard");
+    const [username, setUsername] = useState("");
+
+    const [password, setPassword] = useState("");
+
+    async function handleLogin() {
+
+        try {
+
+            const response = await api.post(
+
+                "/login",
+
+                null,
+
+                {
+
+                    params: {
+
+                        username,
+
+                        password
+
+                    }
+
+                }
+
+            );
+
+            localStorage.setItem(
+
+                "username",
+
+                response.data.username
+
+            );
+
+            localStorage.setItem(
+
+                "role",
+
+                response.data.role
+
+            );
+
+            navigate("/dashboard");
+
+        }
+
+        catch (error) {
+
+            if (error.response) {
+
+                alert(error.response.data.detail);
+
+            }
+
+            else {
+
+                alert("Unable to connect to server.");
+
+            }
+
+        }
+
     }
 
     return (
-    <div className="login-container">
 
-        <Card>
+        <div className="login-container">
 
-            <h2 className="login-title">
-                Employee Greeting Management System
-            </h2>
+            <Card>
 
-            <InputField placeholder="Username" />
-            <InputField placeholder="Password" type="password" />
+                <h2 className="login-title">
 
-            <Button onClick={handleLogin}>
-                Login
-            </Button>
+                    Employee Greeting Management System
 
-        </Card>
+                </h2>
 
-    </div>
-);
+                <InputField
+
+                    placeholder="Username"
+
+                    value={username}
+
+                    onChange={(e) => setUsername(e.target.value)}
+
+                />
+
+                <InputField
+
+                    placeholder="Password"
+
+                    type="password"
+
+                    value={password}
+
+                    onChange={(e) => setPassword(e.target.value)}
+
+                />
+
+                <Button onClick={handleLogin}>
+
+                    Login
+
+                </Button>
+
+            </Card>
+
+        </div>
+
+    );
+
 }
 
 export default Login;

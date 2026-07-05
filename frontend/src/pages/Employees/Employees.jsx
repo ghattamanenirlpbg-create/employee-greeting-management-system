@@ -78,7 +78,7 @@ function Employees() {
             console.error(error);
             alert("Unable to delete employee.");
         }
-    };  
+    };
 
     const loadEmployees = async () => {
         try {
@@ -135,253 +135,264 @@ function Employees() {
             setOpen(false);
 
         } catch (error) {
+
             console.error(error);
-            alert("Unable to save employee.");
+
+            if (error.response) {
+
+                alert(error.response.data.detail);
+
+            } else {
+
+                alert("Unable to connect to backend.");
+
+            }
+
         }
     };
 
-    const columns = [
-        {
-            field: "empId",
-            headerName: "Employee ID",
-            flex: 1
-        },
-        {
-            field: "name",
-            headerName: "Employee Name",
-            flex: 1
-        },
-        {
-            field: "designation",
-            headerName: "Designation",
-            flex: 1
-        },
-        {
-            field: "role",
-            headerName: "Role",
-            flex: 1
-        },
-        {
-            field: "email",
-            headerName: "Email ID",
-            flex: 1.5
-        },
-        {
-            field: "actions",
-            type: "actions",
-            headerName: "Actions",
-            width: 120,
-            getActions: (params) => [
-                <GridActionsCellItem
-                    icon={<EditIcon />}
-                    label="Edit"
-                    onClick={() => handleEdit(params.row)}
-                />,
-                <GridActionsCellItem
-                    icon={<DeleteIcon />}
-                    label="Delete"
-                    onClick={() => handleDelete(params.row.id)}
-                />
-            ]
-        }
-    ];
+        const columns = [
+            {
+                field: "empId",
+                headerName: "Employee ID",
+                flex: 1
+            },
+            {
+                field: "name",
+                headerName: "Employee Name",
+                flex: 1
+            },
+            {
+                field: "designation",
+                headerName: "Designation",
+                flex: 1
+            },
+            {
+                field: "role",
+                headerName: "Role",
+                flex: 1
+            },
+            {
+                field: "email",
+                headerName: "Email ID",
+                flex: 1.5
+            },
+            {
+                field: "actions",
+                type: "actions",
+                headerName: "Actions",
+                width: 120,
+                getActions: (params) => [
+                    <GridActionsCellItem
+                        icon={<EditIcon />}
+                        label="Edit"
+                        onClick={() => handleEdit(params.row)}
+                    />,
+                    <GridActionsCellItem
+                        icon={<DeleteIcon />}
+                        label="Delete"
+                        onClick={() => handleDelete(params.row.id)}
+                    />
+                ]
+            }
+        ];
 
-    const filteredRows = useMemo(() => {
-        return rows.filter((row) =>
-            row.empId.toLowerCase().includes(search.toLowerCase()) ||
-            row.name.toLowerCase().includes(search.toLowerCase()) ||
-            row.designation.toLowerCase().includes(search.toLowerCase()) ||
-            row.role.toLowerCase().includes(search.toLowerCase()) ||
-            row.email.toLowerCase().includes(search.toLowerCase())
-        );
-    }, [rows, search]);
+        const filteredRows = useMemo(() => {
+            return rows.filter((row) =>
+                row.empId.toLowerCase().includes(search.toLowerCase()) ||
+                row.name.toLowerCase().includes(search.toLowerCase()) ||
+                row.designation.toLowerCase().includes(search.toLowerCase()) ||
+                row.role.toLowerCase().includes(search.toLowerCase()) ||
+                row.email.toLowerCase().includes(search.toLowerCase())
+            );
+        }, [rows, search]);
 
-    useEffect(() => {
-        loadEmployees();
-    }, []);
-    return (
+        useEffect(() => {
+            loadEmployees();
+        }, []);
+        return (
 
-        <MainLayout>
+            <MainLayout>
 
-            <div className="employees-container">
+                <div className="employees-container">
 
-                <div className="employees-header">
+                    <div className="employees-header">
 
-                    <h1>Employee Management</h1>
+                        <h1>Employee Management</h1>
 
-                    <Button
-                        variant="contained"
-                        onClick={() => {
+                        <Button
+                            variant="contained"
+                            onClick={() => {
 
-                            setEmployee({
-                                empId: "",
-                                name: "",
-                                designation: "",
-                                role: "",
-                                email: ""
-                            });
+                                setEmployee({
+                                    empId: "",
+                                    name: "",
+                                    designation: "",
+                                    role: "",
+                                    email: ""
+                                });
 
-                            setEditId(null);
+                                setEditId(null);
 
-                            setOpen(true);
+                                setOpen(true);
 
+                            }}
+                        >
+                            Add Employee
+                        </Button>
+
+                    </div>
+
+                    <TextField
+
+                        fullWidth
+
+                        label="Search Employee"
+
+                        sx={{ mb: 2 }}
+
+                        value={search}
+
+                        onChange={(e) => setSearch(e.target.value)}
+
+                    />
+
+                    <Box
+                        sx={{
+                            height: 550,
+                            background: "#ffffff",
+                            borderRadius: 2,
+                            mt: 2
                         }}
                     >
-                        Add Employee
-                    </Button>
+
+                        <DataGrid
+                            rows={filteredRows}
+                            columns={columns}
+                            pageSizeOptions={[5, 10, 20]}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5
+                                    }
+                                }
+                            }}
+                        />
+
+                    </Box>
 
                 </div>
 
-                <TextField
-
+                <Dialog
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    maxWidth="sm"
                     fullWidth
-
-                    label="Search Employee"
-
-                    sx={{ mb: 2 }}
-
-                    value={search}
-
-                    onChange={(e) => setSearch(e.target.value)}
-
-                />
-
-                <Box
-                    sx={{
-                        height: 550,
-                        background: "#ffffff",
-                        borderRadius: 2,
-                        mt: 2
-                    }}
                 >
 
-                    <DataGrid
-                        rows={filteredRows}
-                        columns={columns}
-                        pageSizeOptions={[5, 10, 20]}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: 5
-                                }
-                            }
-                        }}
-                    />
+                    <DialogTitle>
 
-                </Box>
+                        {editId !== null
+                            ? "Edit Employee"
+                            : "Add Employee"}
 
-            </div>
+                    </DialogTitle>
 
-            <Dialog
-                open={open}
-                onClose={() => setOpen(false)}
-                maxWidth="sm"
-                fullWidth
-            >
+                    <DialogContent>
 
-                <DialogTitle>
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{ mt: 1 }}
+                        >
 
-                    {editId !== null
-                        ? "Edit Employee"
-                        : "Add Employee"}
+                            <Grid item xs={6}>
 
-                </DialogTitle>
+                                <TextField
+                                    fullWidth
+                                    label="Employee ID"
+                                    name="empId"
+                                    value={employee.empId}
+                                    onChange={handleChange}
+                                />
 
-                <DialogContent>
+                            </Grid>
 
-                    <Grid
-                        container
-                        spacing={2}
-                        sx={{ mt: 1 }}
-                    >
+                            <Grid item xs={6}>
 
-                        <Grid item xs={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Employee Name"
+                                    name="name"
+                                    value={employee.name}
+                                    onChange={handleChange}
+                                />
 
-                            <TextField
-                                fullWidth
-                                label="Employee ID"
-                                name="empId"
-                                value={employee.empId}
-                                onChange={handleChange}
-                            />
+                            </Grid>
+
+
+                            <Grid item xs={6}>
+
+                                <TextField
+                                    fullWidth
+                                    label="Designation"
+                                    name="designation"
+                                    value={employee.designation}
+                                    onChange={handleChange}
+                                />
+
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Role"
+                                    name="role"
+                                    value={employee.role}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
+
+                                <TextField
+                                    fullWidth
+                                    label="Email ID"
+                                    name="email"
+                                    value={employee.email}
+                                    onChange={handleChange}
+                                />
+
+                            </Grid>
+
 
                         </Grid>
 
-                        <Grid item xs={6}>
+                    </DialogContent>
 
-                            <TextField
-                                fullWidth
-                                label="Employee Name"
-                                name="name"
-                                value={employee.name}
-                                onChange={handleChange}
-                            />
+                    <DialogActions>
 
-                        </Grid>
+                        <Button
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancel
+                        </Button>
 
+                        <Button
+                            variant="contained"
+                            onClick={handleSave}
+                        >
+                            Save
+                        </Button>
 
-                        <Grid item xs={6}>
+                    </DialogActions>
 
-                            <TextField
-                                fullWidth
-                                label="Designation"
-                                name="designation"
-                                value={employee.designation}
-                                onChange={handleChange}
-                            />
+                </Dialog>
 
-                        </Grid>
+            </MainLayout>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                fullWidth
-                                label="Role"
-                                name="role"
-                                value={employee.role}
-                                onChange={handleChange}
-                            />
-                        </Grid>
+        );
 
-                        <Grid item xs={12}>
+    }
 
-                            <TextField
-                                fullWidth
-                                label="Email ID"
-                                name="email"
-                                value={employee.email}
-                                onChange={handleChange}
-                            />
-
-                        </Grid>
-
-
-                    </Grid>
-
-                </DialogContent>
-
-                <DialogActions>
-
-                    <Button
-                        onClick={() => setOpen(false)}
-                    >
-                        Cancel
-                    </Button>
-
-                    <Button
-                        variant="contained"
-                        onClick={handleSave}
-                    >
-                        Save
-                    </Button>
-
-                </DialogActions>
-
-            </Dialog>
-
-        </MainLayout>
-
-    );
-
-}
-
-export default Employees;
+    export default Employees;
