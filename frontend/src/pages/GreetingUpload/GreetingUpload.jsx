@@ -22,10 +22,18 @@ function GreetingUpload() {
 
     useEffect(() => {
 
+        console.log("Token:", token);
+
         api
             .get(`/greeting-links/${token}`)
-            .then(() => setValid(true))
-            .catch(() => setValid(false));
+            .then((response) => {
+                console.log("Validation Success:", response.data);
+                setValid(true);
+            })
+            .catch((error) => {
+                console.log("Validation Error:", error.response?.data);
+                setValid(false);
+            });
 
     }, [token]);
 
