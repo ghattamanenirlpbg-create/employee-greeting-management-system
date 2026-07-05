@@ -147,7 +147,7 @@ const Greetings = () => {
 
     const generateLinks = async () => {
 
-        console.log("Selected Rows:", JSON.stringify(selectedRows));
+        console.log("Selected Rows:", selectedRows);
 
         if (selectedRows.length === 0) {
 
@@ -195,6 +195,7 @@ const Greetings = () => {
 
             setEmployees(response.data);
 
+            console.log("First Employee ID:", response.data[0].id);
             console.log("First Employee:", response.data[0]);
 
         }
@@ -532,6 +533,8 @@ const Greetings = () => {
                             <DataGrid
 
                                 rows={employees}
+
+                                getRowId={(row) => row.id}
 
                                 columns={columns}
 
