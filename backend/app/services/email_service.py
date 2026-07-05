@@ -1,135 +1,90 @@
-import smtplib
 import os
+import requests
 
 from dotenv import load_dotenv
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
-
-SMTP_SERVER = "smtp.gmail.com"
-
-SMTP_PORT = 587
-
-EMAIL = os.getenv("EMAIL")
-
-PASSWORD = os.getenv("EMAIL_PASSWORD")
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+FROM_EMAIL = os.getenv("EMAIL")
 
 
 def send_greeting_email(
-
     employee_name,
-
     employee_email,
-
     link
-
 ):
 
     subject = "Appreciation Greeting Awaiting You"
 
     html = f"""
     <html>
-
     <body style="font-family:Arial;">
 
         <h2>Congratulations {employee_name}!</h2>
 
         <p>
-
         You have received an Appreciation Greeting.
-
         </p>
 
         <p>
-
         Please click the button below to upload your photograph and generate your appreciation card.
-
         </p>
 
         <br>
 
         <a
-        href="{link}"
-        style="
-        background:#1976d2;
-        color:white;
-        padding:14px 24px;
-        text-decoration:none;
-        border-radius:8px;
-        ">
-
-        Generate My Appreciation Card
-
+            href="{link}"
+            style="
+                background:#1976d2;
+                color:white;
+                padding:14px 24px;
+                text-decoration:none;
+                border-radius:8px;
+            ">
+            Generate My Appreciation Card
         </a>
 
         <br><br>
 
         <p>
-
-        <b>Note:</b>
-
-        This link will expire automatically after 5 days.
-
+        <b>Note:</b> This link will expire automatically after 5 days.
         </p>
 
         <br>
 
         Regards,
-
         <br>
-
         <b>Dr. Damodharen M</b>
-
         <br>
-
         Chief Digital Officer
 
     </body>
-
     </html>
     """
 
-    msg = MIMEMultipart("alternative")
+    headers = {
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json",
+    }
 
-    msg["Subject"] = subject
+    payload = {
+        "from": FROM_EMAIL,
+        "to": [employee_email],
+        "subject": subject,
+        "html": html,
+    }
 
-    msg["From"] = EMAIL
-
-    msg["To"] = employee_email
-
-    msg.attach(
-        MIMEText(
-            html,
-            "html"
-        )
-    )
-    
-    print("EMAIL =", EMAIL)
-    print("PASSWORD FOUND =", PASSWORD is not None)
-
-    server = smtplib.SMTP(
-        SMTP_SERVER,
-        SMTP_PORT
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers=headers,
+        json=payload,
+        timeout=30,
     )
 
-    server.starttls()
+    print("Resend Status:", response.status_code)
+    print("Resend Response:", response.text)
 
-    server.login(
-        EMAIL,
-        PASSWORD
-    )
-
-    result = server.sendmail(
-        EMAIL,
-        employee_email,
-        msg.as_string()
-    )
-
-    print("sendmail result:", result)
-
-    server.quit()
-    print("SMTP connection closed.")
+    response.raise_for_status()
 
     return True
