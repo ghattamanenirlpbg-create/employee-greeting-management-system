@@ -67,7 +67,10 @@ def send_greeting_email(
         "Authorization": f"Bearer {RESEND_API_KEY}",
         "Content-Type": "application/json",
     }
-
+    
+    print("FROM_EMAIL =", FROM_EMAIL)
+    print("TO_EMAIL =", employee_email)
+    
     payload = {
         "from": FROM_EMAIL,
         "to": [employee_email],
