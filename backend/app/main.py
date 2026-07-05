@@ -19,7 +19,10 @@ app = FastAPI(title="Employee Greeting Management System", debug=True)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://employee-greeting-management-system-hg9fl2yv8-rlprasad.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
