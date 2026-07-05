@@ -71,75 +71,75 @@ const Greetings = () => {
 
     const generateGreeting = async () => {
 
-    if (!employee) {
+        if (!employee) {
 
-        alert("Fetch Employee First");
+            alert("Fetch Employee First");
 
-        return;
+            return;
 
-    }
+        }
 
-    if (!file) {
+        if (!file) {
 
-        alert("Please select employee photograph");
+            alert("Please select employee photograph");
 
-        return;
+            return;
 
-    }
+        }
 
-    const formData = new FormData();
+        const formData = new FormData();
 
-    formData.append("emp_id", employee.emp_id);
+        formData.append("emp_id", employee.emp_id);
 
-    formData.append("file", file);
+        formData.append("file", file);
 
-    try {
+        try {
 
-        const response = await api.post(
+            const response = await api.post(
 
-            "/greetings/generate",
+                "/greetings/generate",
 
-            formData,
+                formData,
 
-            {
+                {
 
-                headers: {
+                    headers: {
 
-                    "Content-Type": "multipart/form-data"
+                        "Content-Type": "multipart/form-data"
 
-                }
-
-            }
-
-        );
-
-        navigate(
-
-            "/greeting-preview",
-
-            {
-
-                state: {
-
-                    image: response.data.image
+                    }
 
                 }
 
-            }
+            );
 
-        );
+            navigate(
 
-    }
+                "/greeting-preview",
 
-    catch (error) {
+                {
 
-        console.error(error);
+                    state: {
 
-        alert("Greeting Generation Failed");
+                        image: response.data.image
 
-    }
+                    }
 
-};
+                }
+
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Greeting Generation Failed");
+
+        }
+
+    };
 
     // ==========================
     // Generate Greeting
@@ -195,7 +195,7 @@ const Greetings = () => {
 
             setEmployees(response.data);
 
-            console.log("Employees:", response.data.length);
+            console.log("First Employee:", response.data[0]);
 
         }
 
