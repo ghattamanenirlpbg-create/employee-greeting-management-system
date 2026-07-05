@@ -12,7 +12,7 @@ SMTP_SERVER = "smtp.gmail.com"
 
 SMTP_PORT = 587
 
-EMAIL = os.getenv("EMAIL_USERNAME")
+EMAIL = os.getenv("EMAIL")
 
 PASSWORD = os.getenv("EMAIL_PASSWORD")
 
