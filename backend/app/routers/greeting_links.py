@@ -147,12 +147,12 @@ def generate_links(
 
         link = f"http://localhost:5173/greeting/{token}"
 
-        # send_greeting_email(
-        #     employee_name=employee.name,
-        #     employee_email=employee.email,
-        #     link=link
-        # )
-        print("Email sending skipped (Render SMTP test).")
+        send_greeting_email(
+            employee_name=employee.name,
+            employee_email=employee.email,
+            link=link
+        )
+        # print("Email sending skipped (Render SMTP test).")
 
         sent += 1
 
