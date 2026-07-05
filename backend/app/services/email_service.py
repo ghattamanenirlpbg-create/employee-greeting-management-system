@@ -121,12 +121,13 @@ def send_greeting_email(
         PASSWORD
     )
 
-    server.sendmail(
+    result = server.sendmail(
         EMAIL,
         employee_email,
         msg.as_string()
     )
-    print("Email successfully sent to:", employee_email)
+
+    print("sendmail result:", result)
 
     server.quit()
     print("SMTP connection closed.")
