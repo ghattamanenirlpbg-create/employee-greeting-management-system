@@ -14,6 +14,20 @@ def get_employee(db: Session, employee_id: int):
         .first()
     )
 
+def get_employee_by_empid(
+    db: Session,
+    emp_id: str
+):
+
+    return (
+
+        db.query(models.Employee)
+
+        .filter(models.Employee.emp_id == emp_id)
+
+        .first()
+
+    )
 
 def create_employee(db: Session, employee: schemas.EmployeeCreate):
 

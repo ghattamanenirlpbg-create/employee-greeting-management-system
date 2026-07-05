@@ -1,3 +1,16 @@
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi import File
+from fastapi import Form
+from fastapi import UploadFile
+
+from app.services.card_generator import create_appreciation_card
+
+from app.services.appreciation_service import (
+    get_boss_details,
+    get_appreciation_message
+)
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
@@ -114,4 +127,80 @@ def delete_greeting(
 
     return {
         "message": "Greeting deleted successfully"
+    }
+
+# =====================================================
+# ADMIN GENERATE GREETING
+# =====================================================
+
+UPLOAD_FOLDER = Path("uploads")
+
+UPLOAD_FOLDER.mkdir(exist_ok=True)
+
+
+@router.post("/generate")
+async def generate_greeting(
+
+    emp_id: str = Form(...),
+
+    file: UploadFile = File(...),
+
+    db: Session = Depends(get_db)
+
+):
+
+    employee = crud.get_employee_by_empid(
+        db,
+        emp_id
+    )
+
+    if employee is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Employee not found"
+        )
+
+    extension = file.filename.split(".")[-1]
+
+    filename = f"{uuid4()}.{extension}"
+
+    photo_path = UPLOAD_FOLDER / filename
+
+    with open(photo_path, "wb") as buffer:
+
+        buffer.write(await file.read())
+
+    boss = get_boss_details()
+
+    message = get_appreciation_message(
+        employee.name
+    )
+
+    greeting_path = create_appreciation_card(
+
+        employee_name=employee.name,
+
+        designation=employee.designation,
+
+        message=message,
+
+        boss_name=boss["name"],
+
+        boss_designation=boss["designation"],
+
+        boss_photo=boss["photo"],
+
+        employee_photo=str(photo_path),
+
+        output_name=f"{uuid4()}.png"
+
+    )
+
+    return {
+
+        "status": "success",
+
+        "image": greeting_path
+
     }

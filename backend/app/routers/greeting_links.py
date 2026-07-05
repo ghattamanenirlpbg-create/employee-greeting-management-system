@@ -1,4 +1,5 @@
 from datetime import datetime
+print(">>> Greeting Links Router Loaded <<<")
 
 from fastapi import APIRouter
 from fastapi import Depends
@@ -86,6 +87,101 @@ def create_link(
         "url": link,
 
         "expires_on": expires
+
+    }
+
+# =====================================================
+# GENERATE SECURE LINKS (MULTIPLE EMPLOYEES)
+# =====================================================
+
+@router.post("/generate")
+def generate_links(
+
+    employee_ids: list[int],
+
+    db: Session = Depends(get_db)
+
+):
+
+    generated = []
+
+    sent = 0
+
+    for employee_id in employee_ids:
+
+        employee = crud.get_employee(
+
+            db,
+
+            employee_id
+
+        )
+
+        if employee is None:
+
+            continue
+
+        token = generate_token()
+
+        expires = get_expiry_date()
+
+        crud.create_greeting_link(
+
+            db,
+
+            schemas.GreetingLinkCreate(
+
+                employee_id=employee.id,
+
+                employee_email=employee.email,
+
+                token=token,
+
+                expires_on=expires,
+
+                used="No"
+
+            )
+
+        )
+
+        link = f"http://localhost:5173/greeting/{token}"
+
+        send_greeting_email(
+
+            employee_name=employee.name,
+
+            employee_email=employee.email,
+
+            link=link
+
+        )
+
+        sent += 1
+
+        generated.append(
+
+            {
+
+                "employee_id": employee.id,
+
+                "employee_name": employee.name,
+
+                "email": employee.email,
+
+                "token": token,
+
+                "link": link
+
+            }
+
+        )
+
+    return {
+
+        "message": f"{sent} email(s) sent successfully.",
+
+        "links": generated
 
     }
 
