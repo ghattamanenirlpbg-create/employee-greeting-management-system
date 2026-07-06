@@ -46,7 +46,7 @@ def create_link(
 
     expires = get_expiry_date()
 
-    link = f"http://localhost:5173/greeting/{token}"
+    link = f"https://employee-greeting-management-system.vercel.app/greeting/{token}"
 
     crud.create_greeting_link(
 
@@ -145,7 +145,7 @@ def generate_links(
 
         )
 
-        link = f"http://localhost:5173/greeting/{token}"
+        link = f"https://employee-greeting-management-system.vercel.app/greeting/{token}"
 
         send_greeting_email(
             employee_name=employee.name,
