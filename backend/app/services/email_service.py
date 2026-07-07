@@ -1,12 +1,18 @@
 import os
-import requests
+import smtplib
 
 from dotenv import load_dotenv
 
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 load_dotenv()
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-FROM_EMAIL = os.getenv("EMAIL_ADDRESS")
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+
+EMAIL = os.getenv("EMAIL_USERNAME")
+PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
 def send_greeting_email(
@@ -34,60 +40,82 @@ def send_greeting_email(
         <br>
 
         <a
-            href="{link}"
-            style="
-                background:#1976d2;
-                color:white;
-                padding:14px 24px;
-                text-decoration:none;
-                border-radius:8px;
-            ">
-            Generate My Appreciation Card
+        href="{link}"
+        style="
+        background:#1976d2;
+        color:white;
+        padding:14px 24px;
+        text-decoration:none;
+        border-radius:8px;
+        ">
+
+        Generate My Appreciation Card
+
         </a>
 
         <br><br>
 
         <p>
-        <b>Note:</b> This link will expire automatically after 5 days.
+        <b>Note:</b>
+        This link will expire automatically after 5 days.
         </p>
 
         <br>
 
         Regards,
+
         <br>
+
         <b>Dr. Damodharen M</b>
+
         <br>
+
         Chief Digital Officer
 
     </body>
     </html>
     """
 
-    headers = {
-        "Authorization": f"Bearer {RESEND_API_KEY}",
-        "Content-Type": "application/json",
-    }
-    
-    print("FROM_EMAIL =", FROM_EMAIL)
-    print("TO_EMAIL =", employee_email)
-    
-    payload = {
-        "from": FROM_EMAIL,
-        "to": [employee_email],
-        "subject": subject,
-        "html": html,
-    }
+    msg = MIMEMultipart("alternative")
 
-    response = requests.post(
-        "https://api.resend.com/emails",
-        headers=headers,
-        json=payload,
-        timeout=30,
+    msg["Subject"] = subject
+    msg["From"] = EMAIL
+    msg["To"] = employee_email
+
+    msg.attach(
+        MIMEText(
+            html,
+            "html"
+        )
     )
 
-    print("Resend Status:", response.status_code)
-    print("Resend Response:", response.text)
+    print("FROM :", EMAIL)
+    print("TO   :", employee_email)
 
-    response.raise_for_status()
+    server = smtplib.SMTP(
+        SMTP_SERVER,
+        SMTP_PORT
+    )
+
+    server.starttls()
+    print("EMAIL =", EMAIL)
+    print("PASSWORD FOUND =", PASSWORD is not None)
+
+    server.login(
+        EMAIL,
+        PASSWORD
+    )
+
+    result = server.sendmail(
+        EMAIL,
+        employee_email,
+        msg.as_string()
+    )
+
+    print("Sendmail Result:", result)
+
+    server.quit()
+
+    print("Email sent successfully.")
 
     return True
